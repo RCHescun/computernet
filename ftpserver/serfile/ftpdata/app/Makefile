@@ -1,0 +1,80 @@
+# /*****************************************************************************
+#* �爨̹Ԑ (C)2015, אыͨѶ�ɷޓя޹�˾��
+#* 
+#* τ��     Makefile
+#* τ��     Makefile
+#* ŚɝժҪ:     Makefile of ZTE applications
+#* ʹԃ����:     void
+#* 
+#* ў�ňֆؠ       �汾�à     ў�ı꽇        ў�ňɠ         ў�ńۈۊ#* -----------------------------------------------------------------------------
+#* 2015/02/10      V1.0        Create          µ҇ŏ          ����
+#* 
+# ******************************************************************************/
+
+#*******************************************************************************
+# include ZTE application makefile
+#*******************************************************************************
+include $(zte_app_mak)
+
+#*******************************************************************************
+# execute
+#*******************************************************************************
+EXEC = app
+EXEC2 = fota
+
+#*******************************************************************************
+# objects
+#*******************************************************************************
+OBJS    = main.o lora_interface.o lora_ipc.o socket.o MQTTConnectClient.o MQTTSerializePublish.o MQTTUnsubscribeServer.o zte_web_cjson.o \
+	MQTTConnectServer.o       MQTTSubscribeClient.o   \
+	MQTTDeserializePublish.o MQTTPacket.o MQTTSubscribeServer.o  \
+	MQTTUnsubscribeClient.o
+OBJS2   = fota.o
+#OBJS   = port_com.o
+#OBJS    += $(wildcard $(zte_lib_path)/libpthread/*.o)
+
+#*******************************************************************************
+# include path
+#*******************************************************************************
+CFLAGS += -I../../include -g
+CFLAGS += -I../../include
+CFLAGS += -I../loramac
+CFLAGS += -I$(zte_lib_path)/libsqlite
+#*******************************************************************************
+# macro definition
+#*******************************************************************************
+ifeq ($(CUSTOM_MODEL), MF29S2)
+CFLAGS	+= -DCUSTOM_VERSION_MF29S2_ZTE
+endif
+
+#*******************************************************************************
+# library
+#*******************************************************************************
+LDLIBS += -lpthread
+LDLIBS += -lnvram -lm
+LDLIBS += -lssl -lcrypto
+LDLIBS  += -L$(zte_lib_path)/libsqlite
+LDLIBS  += -L$$(zte_lib_path)/../libssl/openssl-1.0.2n/
+CFLAGS += -I$(zte_lib_path)/../libssl/openssl-1.0.2n/include
+#*******************************************************************************
+# library path
+#*******************************************************************************
+LDLIBS  += -L$(zte_lib_path)/libnvram
+
+#*******************************************************************************
+# targets
+#*******************************************************************************
+all: $(EXEC) $(EXEC2)
+
+$(EXEC): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) -Wl,--start-group $(LDLIBS) -Wl,--end-group
+$(EXEC2): $(OBJS2)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS2) -Wl,--start-group $(LDLIBS) -Wl,--end-group
+
+romfs:
+	$(ROMFSINST)  /bin/$(EXEC)
+	$(ROMFSINST)  /bin/$(EXEC2)
+
+clean:
+	-rm -f $(EXEC) $(EXEC2) *.elf *.gdb *.o
+

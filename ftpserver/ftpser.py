@@ -8,7 +8,7 @@ from pyftpdlib.servers import FTPServer
 def main():
     #实例化用户授权管理
     authorizer = DummyAuthorizer()
-    authorizer.add_user('user','123456',"/home/rch/Desktop/ftpserver/serfile",perm='elradfmwMT') #添加用户 参数：username,password,允许的路径、权限
+    authorizer.add_user('user','123456',"/home/rch/Desktop/computernet/ftpserver/serfile",perm='elradfmwMT') #添加用户 参数：username,password,允许的路径、权限
     #authorizer.add_anonymous(os.getcwd()) #这里是允许匿名用户
 
     #实例化FTPHandle

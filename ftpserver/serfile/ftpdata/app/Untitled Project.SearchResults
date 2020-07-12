@@ -1,0 +1,412 @@
+---- buf Matches (427 in 21 files) ----
+Main.c:extern int cfg_get_item(char *name, char* buf, int bufLen);
+Main.c:void printf_x(const UINT8 *buf, UINT16 len){
+Main.c:		printf("0x%2x\t", buf[i]);
+Main.c:	char *buf = NULL;
+Main.c:	buf = cJSON_PrintUnformatted(root);
+Main.c:	printf("[gateways.c] json:\r\n%s\r\n", buf);
+Main.c:	return buf;
+Main.c:uint8_t sendToMqttServer(unsigned char *buf,int buflen,char *topic,unsigned char *payload)//·¢ËÍÊýŸÝµœMQTT·þÎñÆ÷º¯Êý
+Main.c:	len = MQTTSerialize_publish(buf, buflen, 0, 1, 0,lora_gateway.MsgNum, topicString, payload,strlen(payload));
+Main.c:	rc = write(socketfd,buf, len);
+Main.c:		char buf[200];
+Main.c:		int buflen = sizeof(buf);
+Main.c:		len = MQTTSerialize_subscribe(buf, buflen, 0, msgid, 1, &topicString, &req_qos);  //ï¿œï¿œï¿œï¿œÒ»ï¿œï¿œï¿œï¿œï¿œï¿œ
+Main.c:		rc = write(socketfd,buf,len);
+Main.c:		rs = MQTTPacket_read(buf, buflen, getdata);
+Main.c:			rc = MQTTDeserialize_suback(&submsgid, 1, &subcount, &granted_qos, buf, buflen);
+Main.c:	static char buf[SERVER_MSG_LEN_MAX];           //tianchong
+Main.c:				len = MQTTSerialize_pingreq( buf, sizeof(buf));
+Main.c:				rc = write(socketfd,buf,len);
+Main.c:				rs = sendToMqttServer(buf,sizeof(buf),topic,payload);//·¢ËÍÊýŸÝµœ·þÎñÆ÷
+Main.c:				memset(buf,0,SERVER_MSG_LEN_MAX);
+Main.c:					rc = MQTTPacket_read(buf, sizeof(buf), getdata);
+Main.c:								a = MQTTDeserialize_ack(&packettype,&dup,&packet_id,buf,sizeof(buf));
+Main.c:										&payload_in, &payloadlen_in, buf, sizeof(buf));
+Main.c:								a = MQTTSerialize_ack(buf,sizeof(buf),packettype,dup,msgid);
+Main.c:								a = write(socketfd,buf,a);
+Main.c:								a = MQTTDeserialize_ack(&packettype,&dup,&packet_id,buf,sizeof(buf));
+Main.c:								a = MQTTSerialize_ack(buf,sizeof(buf),packettype,dup,packet_id);
+Main.c:								a = write(socketfd,buf,a);
+Main.c:								a = MQTTDeserialize_ack(&packettype,&dup,&packet_id,buf,sizeof(buf));
+Mqtt.c:ssize_t mqtt_unpack_fixed_header(struct mqtt_response *response, const uint8_t *buf, size_t bufsz) {
+Mqtt.c:    const uint8_t *start = buf;
+Mqtt.c:    if (response == NULL || buf == NULL) {
+Mqtt.c:    fixed_header->control_type  = *buf >> 4;
+Mqtt.c:    fixed_header->control_flags = *buf & 0x0F;
+Mqtt.c:        ++buf;
+Mqtt.c:        fixed_header->remaining_length += (*buf & 0x7F) << lshift;
+Mqtt.c:    } while(*buf & 0x80); /* while continue bit is set */ 
+Mqtt.c:    ++buf;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_pack_fixed_header(uint8_t *buf, size_t bufsz, const struct mqtt_fixed_header *fixed_header) {
+Mqtt.c:    const uint8_t *start = buf;
+Mqtt.c:    if (fixed_header == NULL || buf == NULL) {
+Mqtt.c:    *buf =  (((uint8_t) fixed_header->control_type) << 4) & 0xF0;
+Mqtt.c:    *buf |= ((uint8_t) fixed_header->control_flags)       & 0x0F;
+Mqtt.c:        ++buf;
+Mqtt.c:        *buf  = remaining_length & 0x7F;
+Mqtt.c:        if(remaining_length > 127) *buf |= 0x80;
+Mqtt.c:    } while(*buf & 0x80);
+Mqtt.c:    ++buf;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_pack_connection_request(uint8_t* buf, size_t bufsz, 
+Mqtt.c:    const uint8_t const* start = buf;
+Mqtt.c:    rv = mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:    buf += rv;
+Mqtt.c:    *buf++ = 0x00;
+Mqtt.c:    *buf++ = 0x04;
+Mqtt.c:    *buf++ = (uint8_t) 'M';
+Mqtt.c:    *buf++ = (uint8_t) 'Q';
+Mqtt.c:    *buf++ = (uint8_t) 'T';
+Mqtt.c:    *buf++ = (uint8_t) 'T';
+Mqtt.c:    *buf++ = MQTT_PROTOCOL_LEVEL;
+Mqtt.c:    *buf++ = connect_flags;
+Mqtt.c:    *(uint16_t*) buf = (uint16_t) MQTT_PAL_HTONS(keep_alive);
+Mqtt.c:    buf += 2;
+Mqtt.c:    buf += __mqtt_pack_str(buf, client_id);
+Mqtt.c:        buf += __mqtt_pack_str(buf, will_topic);
+Mqtt.c:        memcpy(buf, will_message, will_message_size);
+Mqtt.c:        buf += will_message_size;
+Mqtt.c:        buf += __mqtt_pack_str(buf, user_name);
+Mqtt.c:        buf += __mqtt_pack_str(buf, password);
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_unpack_connack_response(struct mqtt_response *mqtt_response, const uint8_t *buf) {
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    if (*buf & 0xFE) {
+Mqtt.c:        response->session_present_flag = *buf++;
+Mqtt.c:    if (*buf > 5u) {
+Mqtt.c:        response->return_code = (enum MQTTConnackReturnCode) *buf++;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_pack_disconnect(uint8_t *buf, size_t bufsz) {
+Mqtt.c:    return mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:ssize_t mqtt_pack_ping_request(uint8_t *buf, size_t bufsz) {
+Mqtt.c:    return mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:ssize_t mqtt_pack_publish_request(uint8_t *buf, size_t bufsz,
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    if(buf == NULL || topic_name == NULL) {
+Mqtt.c:    rv = mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:    buf += rv;
+Mqtt.c:    buf += __mqtt_pack_str(buf, topic_name);
+Mqtt.c:    *(uint16_t*) buf = (uint16_t) MQTT_PAL_HTONS(packet_id);
+Mqtt.c:    buf += 2;
+Mqtt.c:    memcpy(buf, application_message, application_message_size);
+Mqtt.c:    buf += application_message_size;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_unpack_publish_response(struct mqtt_response *mqtt_response, const uint8_t *buf)
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    response->topic_name_size = (uint16_t) MQTT_PAL_NTOHS(*(uint16_t*) buf);
+Mqtt.c:    buf += 2;
+Mqtt.c:    response->topic_name = buf;
+Mqtt.c:    buf += response->topic_name_size;
+Mqtt.c:    response->packet_id = (uint16_t) MQTT_PAL_NTOHS(*(uint16_t*) buf);
+Mqtt.c:    buf += 2;
+Mqtt.c:    response->application_message = buf;
+Mqtt.c:    buf += response->application_message_size;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_pack_pubxxx_request(uint8_t *buf, size_t bufsz, 
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    if (buf == NULL) {
+Mqtt.c:    rv = mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:    buf += rv;
+Mqtt.c:    *(uint16_t*) buf = (uint16_t) MQTT_PAL_HTONS(packet_id);
+Mqtt.c:    buf += 2;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_unpack_pubxxx_response(struct mqtt_response *mqtt_response, const uint8_t *buf) 
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    packet_id = (uint16_t) MQTT_PAL_NTOHS(*(uint16_t*) buf);
+Mqtt.c:    buf += 2;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_unpack_suback_response (struct mqtt_response *mqtt_response, const uint8_t *buf) {
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    mqtt_response->decoded.suback.packet_id = (uint16_t) MQTT_PAL_NTOHS(*(uint16_t*) buf);
+Mqtt.c:    buf += 2;
+Mqtt.c:    mqtt_response->decoded.suback.return_codes = buf;
+Mqtt.c:    buf += remaining_length;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_pack_subscribe_request(uint8_t *buf, size_t bufsz, uint16_t packet_id, ...) {
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    rv = mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:    buf += rv;
+Mqtt.c:    *(uint16_t*) buf = (uint16_t) MQTT_PAL_HTONS(packet_id);
+Mqtt.c:    buf += 2;
+Mqtt.c:        buf += __mqtt_pack_str(buf, topic[i]);
+Mqtt.c:        *buf++ = max_qos[i];
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_unpack_unsuback_response(struct mqtt_response *mqtt_response, const uint8_t *buf) 
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    mqtt_response->decoded.unsuback.packet_id = (uint16_t) MQTT_PAL_NTOHS(*(uint16_t*) buf);
+Mqtt.c:    buf += 2;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t mqtt_pack_unsubscribe_request(uint8_t *buf, size_t bufsz, uint16_t packet_id, ...) {
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    rv = mqtt_pack_fixed_header(buf, bufsz, &fixed_header);
+Mqtt.c:    buf += rv;
+Mqtt.c:    *(uint16_t*) buf = (uint16_t) MQTT_PAL_HTONS(packet_id);
+Mqtt.c:    buf += 2;
+Mqtt.c:        buf += __mqtt_pack_str(buf, topic[i]);
+Mqtt.c:    return buf - start;
+Mqtt.c:void mqtt_mq_init(struct mqtt_message_queue *mq, void *buf, size_t bufsz) 
+Mqtt.c:    mq->mem_start = buf;
+Mqtt.c:    mq->mem_end = buf + bufsz;
+Mqtt.c:    mq->curr = buf;
+Mqtt.c:ssize_t mqtt_unpack_response(struct mqtt_response* response, const uint8_t *buf, size_t bufsz) {
+Mqtt.c:    const uint8_t const *start = buf;
+Mqtt.c:    ssize_t rv = mqtt_unpack_fixed_header(response, buf, bufsz);
+Mqtt.c:    else buf += rv;
+Mqtt.c:            rv = mqtt_unpack_connack_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_publish_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_pubxxx_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_pubxxx_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_pubxxx_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_pubxxx_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_suback_response(response, buf);
+Mqtt.c:            rv = mqtt_unpack_unsuback_response(response, buf);
+Mqtt.c:    buf += rv;
+Mqtt.c:    return buf - start;
+Mqtt.c:ssize_t __mqtt_pack_str(uint8_t *buf, const char* str) {
+Mqtt.c:    *(uint16_t*) buf = (uint16_t) MQTT_PAL_HTONS(length);
+Mqtt.c:    buf += 2;
+Mqtt.c:        *(buf++) = str[i];
+Mqtt.h: * @param[out] buf the buffer that the MQTT string will be written to.
+Mqtt.h: * @param[in] str the c-string to be written to \p buf.
+Mqtt.h:ssize_t __mqtt_pack_str(uint8_t *buf, const char* str);
+Mqtt.h: * @brief Deserialize the contents of \p buf into an mqtt_fixed_header object.
+Mqtt.h: *       means the entire mqtt_response can be deserialized from \p buf.
+Mqtt.h: * @param[in] buf the buffer.
+Mqtt.h:ssize_t mqtt_unpack_fixed_header(struct mqtt_response *response, const uint8_t *buf, size_t bufsz);
+Mqtt.h: * @brief Deserialize a CONNACK response from \p buf.
+Mqtt.h: * @param[in] buf the buffer that contains the variable header and payload of the packet. The 
+Mqtt.h: *                first byte of \p buf should be the first byte of the variable header.
+Mqtt.h:ssize_t mqtt_unpack_connack_response (struct mqtt_response *mqtt_response, const uint8_t *buf);
+Mqtt.h: * @brief Deserialize a publish response from \p buf.
+Mqtt.h: * @param[out] mqtt_response the response that is initialized from the contents of \p buf.
+Mqtt.h: * @param[in] buf the buffer with the incoming data.
+Mqtt.h:ssize_t mqtt_unpack_publish_response (struct mqtt_response *mqtt_response, const uint8_t *buf);
+Mqtt.h: * @brief Deserialize a PUBACK/PUBREC/PUBREL/PUBCOMP packet from \p buf.
+Mqtt.h: * @param[out] mqtt_response the response that is initialized from the contents of \p buf.
+Mqtt.h: * @param[in] buf the buffer with the incoming data.
+Mqtt.h:ssize_t mqtt_unpack_pubxxx_response(struct mqtt_response *mqtt_response, const uint8_t *buf);
+Mqtt.h: * @brief Deserialize a SUBACK packet from \p buf.
+Mqtt.h: * @param[out] mqtt_response the response that is initialized from the contents of \p buf.
+Mqtt.h: * @param[in] buf the buffer with the incoming data.
+Mqtt.h:ssize_t mqtt_unpack_suback_response(struct mqtt_response *mqtt_response, const uint8_t *buf);
+Mqtt.h: * @brief Deserialize an UNSUBACK packet from \p buf.
+Mqtt.h: * @param[out] mqtt_response the response that is initialized from the contents of \p buf.
+Mqtt.h: * @param[in] buf the buffer with the incoming data.
+Mqtt.h:ssize_t mqtt_unpack_unsuback_response(struct mqtt_response *mqtt_response, const uint8_t *buf);
+Mqtt.h: * @param[out] response the mqtt_response that will be initialize from \p buf.
+Mqtt.h: * @param[in] buf the incoming data buffer.
+Mqtt.h: * @returns The number of bytes consumed on success, zero \p buf does not contain enough bytes
+Mqtt.h:ssize_t mqtt_unpack_response(struct mqtt_response* response, const uint8_t *buf, size_t bufsz);
+Mqtt.h: * @brief Serialize an mqtt_fixed_header and write it to \p buf.
+Mqtt.h: * @param[out] buf the buffer to write to.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put in to \p buf.
+Mqtt.h: * @returns The number of bytes written to \p buf, or 0 if \p buf is too small, or a 
+Mqtt.h:ssize_t mqtt_pack_fixed_header(uint8_t *buf, size_t bufsz, const struct mqtt_fixed_header *fixed_header);
+Mqtt.h: * @param[out] buf the buffer to pack the connection request packet into.
+Mqtt.h: * @param[in] bufsz the number of bytes left in \p buf.
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the CONNECT 
+Mqtt.h:ssize_t mqtt_pack_connection_request(uint8_t* buf, size_t bufsz, 
+Mqtt.h: * @brief Serialize a PUBLISH request and put it in \p buf.
+Mqtt.h: * @param[out] buf the buffer to put the PUBLISH packet in.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put into \p buf.
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the PUBLISH 
+Mqtt.h:ssize_t mqtt_pack_publish_request(uint8_t *buf, size_t bufsz,
+Mqtt.h: * @brief Serialize a PUBACK, PUBREC, PUBREL, or PUBCOMP packet and put it in \p buf.
+Mqtt.h: * @param[out] buf the buffer to put the PUBXXX packet in.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put into \p buf.
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the PUBXXX 
+Mqtt.h:ssize_t mqtt_pack_pubxxx_request(uint8_t *buf, size_t bufsz, 
+Mqtt.h: * @brief Serialize a SUBSCRIBE packet and put it in \p buf.
+Mqtt.h: * @param[out] buf the buffer to put the SUBSCRIBE packet in.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put into \p buf.
+Mqtt.h: * ssize_t n = mqtt_pack_subscribe_request(buf, bufsz, 1234, "topic_1", 0, "topic_2", 2, NULL);
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the SUBSCRIBE 
+Mqtt.h:ssize_t mqtt_pack_subscribe_request(uint8_t *buf, size_t bufsz, 
+Mqtt.h: * @brief Serialize a UNSUBSCRIBE packet and put it in \p buf.
+Mqtt.h: * @param[out] buf the buffer to put the UNSUBSCRIBE packet in.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put into \p buf.
+Mqtt.h: * ssize_t n = mqtt_pack_unsubscribe_request(buf, bufsz, 4321, "topic_1", "topic_2", NULL);
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the UNSUBSCRIBE 
+Mqtt.h:ssize_t mqtt_pack_unsubscribe_request(uint8_t *buf, size_t bufsz, 
+Mqtt.h: * @brief Serialize a PINGREQ and put it into \p buf.
+Mqtt.h: * @param[out] buf the buffer to put the PINGREQ packet in.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put into \p buf.
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the PINGREQ
+Mqtt.h:ssize_t mqtt_pack_ping_request(uint8_t *buf, size_t bufsz);
+Mqtt.h: * @brief Serialize a DISCONNECT and put it into \p buf.
+Mqtt.h: * @param[out] buf the buffer to put the DISCONNECT packet in.
+Mqtt.h: * @param[in] bufsz the maximum number of bytes that can be put into \p buf.
+Mqtt.h: * @returns The number of bytes put into \p buf, 0 if \p buf is too small to fit the DISCONNECT 
+Mqtt.h:ssize_t mqtt_pack_disconnect(uint8_t *buf, size_t bufsz);
+Mqtt.h: * @param[in] buf The buffer for this message queue.
+Mqtt.h:void mqtt_mq_init(struct mqtt_message_queue *mq, void *buf, size_t bufsz);
+MQTTConnect.h:int MQTTSerialize_connect(unsigned char* buf, int buflen, MQTTPacket_connectData* options);
+MQTTConnect.h:int MQTTDeserialize_connect(MQTTPacket_connectData* data, unsigned char* buf, int len);
+MQTTConnect.h:int MQTTSerialize_connack(unsigned char* buf, int buflen, unsigned char connack_rc, unsigned char sessionPresent);
+MQTTConnect.h:int MQTTDeserialize_connack(unsigned char* sessionPresent, unsigned char* connack_rc, unsigned char* buf, int buflen);
+MQTTConnect.h:int MQTTSerialize_disconnect(unsigned char* buf, int buflen);
+MQTTConnect.h:int MQTTSerialize_pingreq(unsigned char* buf, int buflen);
+MQTTConnectClient.c:  * @param buf the buffer into which the packet will be serialized
+MQTTConnectClient.c:int MQTTSerialize_connect(unsigned char* buf, int buflen, MQTTPacket_connectData* options)
+MQTTConnectClient.c:	unsigned char *ptr = buf;
+MQTTConnectClient.c:	rc = ptr - buf;
+MQTTConnectClient.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTConnectClient.c:int MQTTDeserialize_connack(unsigned char* sessionPresent, unsigned char* connack_rc, unsigned char* buf, int buflen)
+MQTTConnectClient.c:	unsigned char* curdata = buf;
+MQTTConnectClient.c:  * @param buf the buffer into which the packet will be serialized
+MQTTConnectClient.c:int MQTTSerialize_zero(unsigned char* buf, int buflen, unsigned char packettype)
+MQTTConnectClient.c:	unsigned char *ptr = buf;
+MQTTConnectClient.c:	rc = ptr - buf;
+MQTTConnectClient.c:  * @param buf the buffer into which the packet will be serialized
+MQTTConnectClient.c:int MQTTSerialize_disconnect(unsigned char* buf, int buflen)
+MQTTConnectClient.c:	return MQTTSerialize_zero(buf, buflen, DISCONNECT);
+MQTTConnectClient.c:  * @param buf the buffer into which the packet will be serialized
+MQTTConnectClient.c:int MQTTSerialize_pingreq(unsigned char* buf, int buflen)
+MQTTConnectClient.c:	return MQTTSerialize_zero(buf, buflen, PINGREQ);
+MQTTConnectServer.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTConnectServer.c:int MQTTDeserialize_connect(MQTTPacket_connectData* data, unsigned char* buf, int len)
+MQTTConnectServer.c:	unsigned char* curdata = buf;
+MQTTConnectServer.c:	unsigned char* enddata = &buf[len];
+MQTTConnectServer.c:  * @param buf the buffer into which the packet will be serialized
+MQTTConnectServer.c:int MQTTSerialize_connack(unsigned char* buf, int buflen, unsigned char connack_rc, unsigned char sessionPresent)
+MQTTConnectServer.c:	unsigned char *ptr = buf;
+MQTTConnectServer.c:	rc = ptr - buf;
+MQTTDeserializePublish.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTDeserializePublish.c:		unsigned char** payload, int* payloadlen, unsigned char* buf, int buflen)
+MQTTDeserializePublish.c:	unsigned char* curdata = buf;
+MQTTDeserializePublish.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTDeserializePublish.c:int MQTTDeserialize_ack(unsigned char* packettype, unsigned char* dup, unsigned short* packetid, unsigned char* buf, int buflen)
+MQTTDeserializePublish.c:	unsigned char* curdata = buf;
+MQTTPacket.c: * @param buf the buffer into which the encoded data is written
+MQTTPacket.c:int MQTTPacket_encode(unsigned char* buf, int length)
+MQTTPacket.c:		buf[rc++] = d;
+MQTTPacket.c:int MQTTPacket_decodeBuf(unsigned char* buf, int* value)
+MQTTPacket.c:	bufptr = buf;
+MQTTPacket.c: * @param buf the buffer into which the packet will be serialized
+MQTTPacket.c:int MQTTPacket_read(unsigned char* buf, int buflen, int (*getfn)(unsigned char*, int))
+MQTTPacket.c:	if ((*getfn)(buf, 1) != 1){
+MQTTPacket.c:		printf_x(buf,1);
+MQTTPacket.c:	printf_x(buf,1);
+MQTTPacket.c:	header.byte = buf[0];
+MQTTPacket.c:	len += MQTTPacket_encode(buf + 1, rem_len); /* put the original remaining length back into the buffer */
+MQTTPacket.c:	if ((*getfn)(buf + len, rem_len) != rem_len){
+MQTTPacket.c:	header.byte = buf[0];
+MQTTPacket.c:char* MQTTPacket_toString(char* strbuf, int strbuflen, unsigned char* buf, int buflen)
+MQTTPacket.c:	header.byte = buf[index++];
+MQTTPacket.c:	index += MQTTPacket_decodeBuf(&buf[index], &rem_length);
+MQTTPacket.c:		if (MQTTDeserialize_connect(&data, buf, buflen) == 1)
+MQTTPacket.c:		if (MQTTDeserialize_connack(&sessionPresent, &connack_rc, buf, buflen) == 1)
+MQTTPacket.c:				&payload, &payloadlen, buf, buflen) == 1)
+MQTTPacket.c:		if (MQTTDeserialize_ack(&packettype, &dup, &packetid, buf, buflen) == 1)
+MQTTPacket.c:				topicFilters, requestedQoSs, buf, buflen) == 1)
+MQTTPacket.c:		if (MQTTDeserialize_suback(&packetid, maxcount, &count, grantedQoSs, buf, buflen) == 1)
+MQTTPacket.c:		if (MQTTDeserialize_unsubscribe(&dup, &packetid, maxcount, &count, topicFilters, buf, buflen) == 1)
+MQTTPacket.c:		if (MQTTDeserialize_unsuback(&packetid, buf, buflen) == 1)
+MQTTPacket.h:int MQTTSerialize_ack(unsigned char* buf, int buflen, unsigned char type, unsigned char dup, unsigned short packetid);
+MQTTPacket.h:int MQTTDeserialize_ack(unsigned char* packettype, unsigned char* dup, unsigned short* packetid, unsigned char* buf, int buflen);
+MQTTPacket.h:int MQTTPacket_encode(unsigned char* buf, int length);
+MQTTPacket.h:int MQTTPacket_decodeBuf(unsigned char* buf, int* value);
+MQTTPacket.h:int MQTTPacket_read(unsigned char* buf, int buflen, int (*getfn)(unsigned char*, int));
+MQTTPacket.h:char* MQTTPacket_toString(char* strbuf, int strbuflen, unsigned char* buf, int buflen);
+MQTTPublish.h:int MQTTSerialize_publish(unsigned char* buf, int buflen, unsigned char dup, int qos, unsigned char retained, unsigned short packetid,
+MQTTPublish.h:		unsigned char** payload, int* payloadlen, unsigned char* buf, int len);
+MQTTPublish.h:int MQTTSerialize_puback(unsigned char* buf, int buflen, unsigned short packetid);
+MQTTPublish.h:int MQTTSerialize_pubrel(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid);
+MQTTPublish.h:int MQTTSerialize_pubcomp(unsigned char* buf, int buflen, unsigned short packetid);
+MQTTSerializePublish.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSerializePublish.c:int MQTTSerialize_publish(unsigned char* buf, int buflen, unsigned char dup, int qos, unsigned char retained, unsigned short packetid,
+MQTTSerializePublish.c:	unsigned char *ptr = buf;
+MQTTSerializePublish.c:	rc = ptr - buf;
+MQTTSerializePublish.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSerializePublish.c:int MQTTSerialize_ack(unsigned char* buf, int buflen, unsigned char packettype, unsigned char dup, unsigned short packetid)
+MQTTSerializePublish.c:	unsigned char *ptr = buf;
+MQTTSerializePublish.c:	rc = ptr - buf;
+MQTTSerializePublish.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSerializePublish.c:int MQTTSerialize_puback(unsigned char* buf, int buflen, unsigned short packetid)
+MQTTSerializePublish.c:	return MQTTSerialize_ack(buf, buflen, PUBACK, packetid, 0);
+MQTTSerializePublish.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSerializePublish.c:int MQTTSerialize_pubrel(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid)
+MQTTSerializePublish.c:	return MQTTSerialize_ack(buf, buflen, PUBREL, packetid, dup);
+MQTTSerializePublish.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSerializePublish.c:int MQTTSerialize_pubcomp(unsigned char* buf, int buflen, unsigned short packetid)
+MQTTSerializePublish.c:	return MQTTSerialize_ack(buf, buflen, PUBCOMP, packetid, 0);
+MQTTSubscribe.h:int MQTTSerialize_subscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid,
+MQTTSubscribe.h:		int maxcount, int* count, MQTTString topicFilters[], int requestedQoSs[], unsigned char* buf, int len);
+MQTTSubscribe.h:int MQTTSerialize_suback(unsigned char* buf, int buflen, unsigned short packetid, int count, int* grantedQoSs);
+MQTTSubscribe.h:int MQTTDeserialize_suback(unsigned short* packetid, int maxcount, int* count, int grantedQoSs[], unsigned char* buf, int len);
+MQTTSubscribeClient.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSubscribeClient.c:int MQTTSerialize_subscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid, int count,
+MQTTSubscribeClient.c:	unsigned char *ptr = buf;
+MQTTSubscribeClient.c:	rc = ptr - buf;
+MQTTSubscribeClient.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTSubscribeClient.c:int MQTTDeserialize_suback(unsigned short* packetid, int maxcount, int* count, int grantedQoSs[], unsigned char* buf, int buflen)
+MQTTSubscribeClient.c:	unsigned char* curdata = buf;
+MQTTSubscribeServer.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTSubscribeServer.c:	int requestedQoSs[], unsigned char* buf, int buflen)
+MQTTSubscribeServer.c:	unsigned char* curdata = buf;
+MQTTSubscribeServer.c:  * @param buf the buffer into which the packet will be serialized
+MQTTSubscribeServer.c:int MQTTSerialize_suback(unsigned char* buf, int buflen, unsigned short packetid, int count, int* grantedQoSs)
+MQTTSubscribeServer.c:	unsigned char *ptr = buf;
+MQTTSubscribeServer.c:	rc = ptr - buf;
+MQTTUnsubscribe.h:int MQTTSerialize_unsubscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid,
+MQTTUnsubscribe.h:		unsigned char* buf, int len);
+MQTTUnsubscribe.h:int MQTTSerialize_unsuback(unsigned char* buf, int buflen, unsigned short packetid);
+MQTTUnsubscribe.h:int MQTTDeserialize_unsuback(unsigned short* packetid, unsigned char* buf, int len);
+MQTTUnsubscribeClient.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTUnsubscribeClient.c:int MQTTSerialize_unsubscribe(unsigned char* buf, int buflen, unsigned char dup, unsigned short packetid,
+MQTTUnsubscribeClient.c:	unsigned char *ptr = buf;
+MQTTUnsubscribeClient.c:	rc = ptr - buf;
+MQTTUnsubscribeClient.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTUnsubscribeClient.c:int MQTTDeserialize_unsuback(unsigned short* packetid, unsigned char* buf, int buflen)
+MQTTUnsubscribeClient.c:	rc = MQTTDeserialize_ack(&type, &dup, packetid, buf, buflen);
+MQTTUnsubscribeServer.c:  * @param buf the raw buffer data, of the correct length determined by the remaining length field
+MQTTUnsubscribeServer.c:		unsigned char* buf, int len)
+MQTTUnsubscribeServer.c:	unsigned char* curdata = buf;
+MQTTUnsubscribeServer.c:  * @param buf the buffer into which the packet will be serialized
+MQTTUnsubscribeServer.c:int MQTTSerialize_unsuback(unsigned char* buf, int buflen, unsigned short packetid)
+MQTTUnsubscribeServer.c:	unsigned char *ptr = buf;
+MQTTUnsubscribeServer.c:	rc = ptr - buf;
+Mqtt_pal.c:ssize_t mqtt_pal_sendall(int fd, const void* buf, size_t len, int flags) {
+Mqtt_pal.c:        ssize_t tmp = send(fd, buf + sent, len - sent, flags);
+Mqtt_pal.c:ssize_t mqtt_pal_recvall(int fd, void* buf, size_t bufsz, int flags) {
+Mqtt_pal.c:    const void const *start = buf;
+Mqtt_pal.c:        rv = recv(fd, buf, bufsz, flags);
+Mqtt_pal.c:            buf += rv;
+Mqtt_pal.c:    return buf - start;
+Mqtt_pal.h: * @param[in] buf A pointer to the first byte in the buffer to send.
+Mqtt_pal.h: * @param[in] len The number of bytes to send (starting at \p buf).
+Mqtt_pal.h:ssize_t mqtt_pal_sendall(int fd, const void* buf, size_t len, int flags);
+Mqtt_pal.h: * @param[in] buf A pointer to the receive buffer.
+Mqtt_pal.h: * @param[in] bufsz The max number of bytes that can be put into \p buf.
+Mqtt_pal.h:ssize_t mqtt_pal_recvall(int fd, void* buf, size_t bufsz, int flags);
+Socket.c:int myreceive(char *buf, size_t count);
+Socket.c:int mysend(char *buf, size_t count);
+Socket.c:extern int cfg_get_item(char *name, char* buf, int bufLen);
+Socket.c:	int (* receive)(char *buf, size_t count);
+Socket.c:	int (* send)(char *buf, size_t count);
+Socket.c:int getdata(char* buf, int count)
+Socket.c:	return read(mysock.sockfd, buf, (size_t)count);
+Socket.c:	//read(ssl,buf,sizeof(buf));
+Socket.c:VOID readUdpBuf(T_UdpContext *pudpCtx, UINT8 *buf, UINT16 buflen)
+Socket.c:		memcpy(udpBuf + dataLen, buf, buflen);
+Socket.c:VOID readTcpBuf(T_TcpContext *ptcpCtx, UINT8 *buf, UINT16 buflen)
+Socket.c:		memcpy(tcpBuf + dataLen, buf, buflen);
+Socket.c:					CHAR buf[TXBUFLEN_MAX] = {0};
+Socket.c:					memcpy(buf, pTcpContext->TXBUF + ret,pTcpContext->TxdataLen);
+Socket.c:					memcpy(pTcpContext->TXBUF, buf, pTcpContext->TxdataLen);
+Socket.c:					CHAR buf[TXBUFLEN_MAX] = {0};
+Socket.c:					memcpy(buf, pUdpContext->TXBUF + ret,pUdpContext->TxdataLen);
+Socket.c:					memcpy(pUdpContext->TXBUF, buf, pUdpContext->TxdataLen);
+Socket.c:void getLocalTime(char *buf)
+Socket.c:	sprintf(buf, "%s-%s-%s %s:%s:%s", year, mon, day,hour,min,sec);
+Socket.c:	char buf[350];
+Socket.c:    int buflen = sizeof(buf);
+Socket.c:	len = MQTTSerialize_connect(buf, buflen, &data);
+Socket.c:	rs = write(mysock.sockfd,buf,len);
+Socket.c:	char buf[RXBUFLEN_MAX] ={0};
+Socket.c:	while(!sOck_ReadSockData(fd, buf, RXBUFLEN_MAX))
+Socket.c:	SOCK_DBG("buf : %s\n", buf);
+Socket.h://SINT32 sOck_sendTcpBuf(UINT8 tcpChID, UINT8 *buf, UINT16 buflen);
+Socket.h:int getdata(char* buf, int count);
